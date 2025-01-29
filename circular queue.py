@@ -66,24 +66,6 @@ root.title("Circular Queue Visualizer")
 root.configure(bg='white')
 root.resizable(False, False)
 
-# box_img = Image.open("Boxes.png")
-# box_img = box_img.resize((200,200))
-# box_img = ImageTk.PhotoImage(box_img)
-# image_label = tk.Label(root, image=box_img)
-# image_label.pack(pady=100)
-#
-# label = tk.Label(root, text=q.arr[0], font=("Arial", 16))
-# label.place(x=336, y=170)
-#
-# label = tk.Label(root, text=q.arr[1], font=("Arial", 16))
-# label.place(x=336+40*1, y=170)
-#
-# label = tk.Label(root, text=q.arr[2], font=("Arial", 16))
-# label.place(x=336+40*2, y=170)
-#
-# label = tk.Label(root, text=q.arr[3], font=("Arial", 16))
-# label.place(x=336+40*3, y=170)
-
 
 def start_animation():
     # Get the user-provided number
@@ -132,8 +114,8 @@ def start_deleteanimation():
 
         f = q.front
         start_x1, start_y1, start_x2, start_y2 = 50 + 50 * f, 50, 100 + 50 * f, 100
-        q.dequeue()
-
+        dequeued_number = q.dequeue()
+        label_status.config(text=f"Dequeued no. is {dequeued_number}", fg="green")
         q.display()
 
         box = canvas.create_rectangle(start_x1, start_y1, start_x2, start_y2, fill="white", outline="black")
@@ -143,51 +125,6 @@ def start_deleteanimation():
         label_status.config(text="Queue is empty.", fg="red")
         return
 
-# def start_rear_animation():
-#     global f_xaxis
-#     temp = 0
-#     global r_xaxis
-#
-#     if f_xaxis==25 and r_xaxis==25:
-#         first_entry=True
-#     else:
-#         first_entry=False
-#     start_x1 = r_xaxis
-#     end_x1 = r_xaxis + 50
-#     for _ in range(start_x1, end_x1, 5):
-#
-#         if first_entry:
-#             canvas.move(text_f, 5, 0)
-#             temp=50
-#
-#         canvas.move(text_r, 5, 0)
-#         canvas.update()
-#         canvas.after(50)  # Delay for smooth animation
-#     r_xaxis = end_x1
-#
-#     f_xaxis = f_xaxis + temp
-#
-# def start_front_animation():
-#     global r_xaxis
-#     global f_xaxis
-#
-#     if f_xaxis==175 and r_xaxis==175:
-#         last_exit=True
-#     else:
-#         last_exit=False
-#
-#     start_x1 = f_xaxis
-#
-#     if last_exit:
-#         end_x1 = 25
-#     else:
-#         end_x1 = f_xaxis + 50
-#     for _ in range(start_x1, end_x1, 5):
-#
-#         canvas.move(text_f, 5, 0)
-#         canvas.update()
-#         canvas.after(50)  # Delay for smooth animation
-#     f_xaxis = end_x1
 
 def animate_rf():
     global r_xaxis
@@ -195,57 +132,54 @@ def animate_rf():
     start_xr=r_xaxis
     start_xf=f_xaxis
 
-    print(f"First element?={q.first_element} Last element?={q.last_element}")
-
     if q.first_element:
-        print(f"start of r={start_xr} start of f={start_xf}")
-
         end_x = 75
         for _ in range(start_xr, end_x, 5):
             canvas.move(text_r, 5, 0)
             canvas.move(text_f, 5, 0)
             canvas.update()
             canvas.after(50)
-        #start_xr = start_xf = 75
-        r_xaxis = r_yaxis = 75
-        print(f"start of r={start_xr} start of f={start_xf}")
+        r_xaxis = f_xaxis = 75
         return
     if q.last_element:
-        print(f"start of r={start_xr} start of f={start_xf}")
         end_x = 25
         for _ in range(start_xr, end_x, -5):
             canvas.move(text_r, -5, 0)
             canvas.move(text_f, -5, 0)
             canvas.update()
             canvas.after(50)
-        #start_xr = start_xf = 25
-        r_xaxis = r_yaxis = 25
-        print(f"start of r={start_xr} start of f={start_xf}")
+        r_xaxis = f_xaxis = 25
         return
-    print(f"rear={q.rear} front={q.front}")
+
     end_xr = 25 + 50*(q.rear+1)
-    end_xf = 25 + 50*q.front
+    end_xf = 25 + 50*(q.front+1)
     print(f"start of r={start_xr} start of f={start_xf}")
     print(f"end of r={end_xr} end of f={end_xf}")
-    if start_xf<end_xr or start_xf<end_xf:
-        direction=1
+    if start_xr<end_xr:
+        direction_r=1
     else:
-        direction=-1
-    if direction==1:
+        direction_r=-1
+    if start_xf<end_xf:
+        direction_f=1
+    else:
+        direction_f=-1
+    if direction_r==1:
         for _ in range(start_xr, end_xr, 5):
             canvas.move(text_r, 5, 0)
             canvas.update()
             canvas.after(50)
-        for _ in range(start_xf, end_xf, 5):
-            canvas.move(text_f, 5, 0)
-            canvas.update()
-            canvas.after(50)
-    if direction==-1:
+    if direction_r==-1:
         for _ in range(start_xr, end_xr, -5):
             canvas.move(text_r, -5, 0)
             canvas.update()
             canvas.after(50)
+    if direction_f==1:
         for _ in range(start_xf, end_xf, 5):
+            canvas.move(text_f, 5, 0)
+            canvas.update()
+            canvas.after(50)
+    if direction_f==-1:
+        for _ in range(start_xf, end_xf, -5):
             canvas.move(text_f, -5, 0)
             canvas.update()
             canvas.after(50)
